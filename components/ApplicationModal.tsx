@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -15,7 +15,6 @@ const schema = z.object({
   status: z.enum(['Applied', 'Interview', 'Rejected', 'Offer', 'Withdrawn']),
   jobUrl: z.string().optional(),
   notes: z.string().optional(),
-  resumeFile: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -28,6 +27,7 @@ interface Props {
 
 export default function ApplicationModal({ initial, onClose, onSaved }: Props) {
   const isEdit = Boolean(initial);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const {
     register,
@@ -44,7 +44,6 @@ export default function ApplicationModal({ initial, onClose, onSaved }: Props) {
       status: 'Applied',
       jobUrl: '',
       notes: '',
-      resumeFile: '',
     },
   });
 
@@ -58,19 +57,33 @@ export default function ApplicationModal({ initial, onClose, onSaved }: Props) {
         status: initial.status,
         jobUrl: initial.jobUrl ?? '',
         notes: initial.notes ?? '',
-        resumeFile: initial.resumeFile,
       });
     }
   }, [initial, reset]);
 
-  async function onSubmit(values: FormValues) {
+  async function handleFormSubmit(values: FormValues) {
+    let resumeFile: string | undefined;
+
+    if (selectedFile) {
+      const fd = new FormData();
+      fd.append('file', selectedFile);
+      const uploadRes = await fetch('/api/resumes/upload', { method: 'POST', body: fd });
+      if (!uploadRes.ok) {
+        const err = await uploadRes.json();
+        toast.error(err.error ?? 'Resume upload failed');
+        return;
+      }
+      const data = await uploadRes.json();
+      resumeFile = data.filename;
+    }
+
     const url = isEdit ? `/api/applications/${initial!.id}` : '/api/applications';
     const method = isEdit ? 'PUT' : 'POST';
 
     const res = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
+      body: JSON.stringify({ ...values, resumeFile }),
     });
 
     if (!res.ok) {
@@ -92,7 +105,7 @@ export default function ApplicationModal({ initial, onClose, onSaved }: Props) {
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-4 space-y-4">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="px-6 py-4 space-y-4">
           <Field label="Company" error={errors.company?.message}>
             <input {...register('company')} className={input} placeholder="Acme Corp" />
           </Field>
@@ -117,6 +130,19 @@ export default function ApplicationModal({ initial, onClose, onSaved }: Props) {
           </Field>
           <Field label="Notes (optional)">
             <textarea {...register('notes')} className={`${input} h-24 resize-none`} />
+          </Field>
+          <Field label="Resume PDF (optional — uses starter.pdf if blank)">
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={(e) => setSelectedFile(e.target.files?.[0] ?? null)}
+              className="text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            />
+            {isEdit && initial && (
+              <p className="text-xs text-gray-400 mt-1">
+                Current: {initial.isStarterResume ? 'starter.pdf' : initial.resumeFile}
+              </p>
+            )}
           </Field>
 
           <div className="flex justify-end gap-3 pt-2">
