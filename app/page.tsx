@@ -6,6 +6,7 @@ import type { Application } from '@/types/application';
 import StatusBadge from '@/components/StatusBadge';
 import ApplicationModal from '@/components/ApplicationModal';
 import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -34,7 +35,12 @@ export default function Dashboard() {
 
   async function handleDelete(id: string) {
     if (!confirm('Delete this application?')) return;
-    await fetch(`/api/applications/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/applications/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      toast.success('Application deleted');
+    } else {
+      toast.error('Failed to delete application');
+    }
     mutate();
   }
 
