@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import fs from 'fs';
+import path from 'path';
 import * as storage from '@/lib/storage';
+import { STARTER_RESUME } from '@/lib/config';
+
+const RESUMES_DIR = path.join(process.cwd(), 'data', 'resumes');
 
 const updateSchema = z.object({
   company: z.string().min(1).optional(),
@@ -44,7 +49,18 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const record = await storage.getById(id);
+  if (!record) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
   const deleted = await storage.remove(id);
   if (!deleted) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+
+  if (!record.isStarterResume && record.resumeFile !== STARTER_RESUME) {
+    const filePath = path.join(RESUMES_DIR, path.basename(record.resumeFile));
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+  }
+
   return NextResponse.json({ success: true });
 }
