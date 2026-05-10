@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import useSWR from 'swr';
 import type { Application } from '@/types/application';
-import StatusBadge from '@/components/StatusBadge';
+import InlineStatusSelect from '@/components/InlineStatusSelect';
 import ApplicationModal from '@/components/ApplicationModal';
 import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
@@ -83,7 +83,7 @@ export default function Dashboard() {
                     <td className="px-4 py-3 font-medium text-gray-900">{app.company}</td>
                     <td className="px-4 py-3 text-gray-700">{app.role}</td>
                     <td className="px-4 py-3">
-                      <StatusBadge status={app.status} />
+                      <InlineStatusSelect id={app.id} status={app.status} onUpdated={mutate} />
                     </td>
                     <td className="px-4 py-3 text-gray-600">
                       {new Date(app.appliedDate).toLocaleDateString()}
