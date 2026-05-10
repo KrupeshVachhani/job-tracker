@@ -5,6 +5,7 @@ import useSWR from 'swr';
 import type { Application } from '@/types/application';
 import InlineStatusSelect from '@/components/InlineStatusSelect';
 import ApplicationModal from '@/components/ApplicationModal';
+import ResumePreviewModal from '@/components/ResumePreviewModal';
 import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
 
@@ -17,6 +18,7 @@ export default function Dashboard() {
   );
   const [editTarget, setEditTarget] = useState<Application | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [previewFile, setPreviewFile] = useState<string | null>(null);
 
   function openAdd() {
     setEditTarget(null);
@@ -90,20 +92,19 @@ export default function Dashboard() {
                     </td>
                     <td className="px-4 py-3 text-gray-600">{app.source}</td>
                     <td className="px-4 py-3">
-                      {app.isStarterResume ? (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
-                          Starter
-                        </span>
-                      ) : (
-                        <a
-                          href={`/api/resumes/${app.resumeFile}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline text-xs"
+                      <div className="flex items-center gap-2">
+                        {app.isStarterResume && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
+                            Starter
+                          </span>
+                        )}
+                        <button
+                          onClick={() => setPreviewFile(app.resumeFile)}
+                          className="text-xs text-blue-600 hover:underline"
                         >
-                          View PDF
-                        </a>
-                      )}
+                          View
+                        </button>
+                      </div>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex gap-2">
@@ -134,6 +135,13 @@ export default function Dashboard() {
           initial={editTarget}
           onClose={closeModal}
           onSaved={() => { mutate(); closeModal(); }}
+        />
+      )}
+
+      {previewFile && (
+        <ResumePreviewModal
+          filename={previewFile}
+          onClose={() => setPreviewFile(null)}
         />
       )}
     </main>
