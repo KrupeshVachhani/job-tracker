@@ -32,7 +32,6 @@ export default function Dashboard() {
   const [sortKey, setSortKey] = useState<SortKey>('appliedDate');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
 
-  // Cmd/Ctrl+K to open add modal
   useEffect(() => {
     function handler(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -84,7 +83,6 @@ export default function Dashboard() {
     });
   }, [applications, search, statusFilter, sortKey, sortDir]);
 
-  // Stats
   const stats = useMemo(() => {
     const counts: Record<ApplicationStatus, number> = { Applied: 0, Interview: 0, Offer: 0, Rejected: 0, Withdrawn: 0 };
     applications.forEach((a) => counts[a.status]++);
@@ -108,26 +106,26 @@ export default function Dashboard() {
   }
 
   function sortIcon(key: SortKey) {
-    if (sortKey !== key) return <span className="text-gray-300 ml-1">↕</span>;
-    return <span className="text-blue-500 ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>;
+    if (sortKey !== key) return <span className="text-slate-600 ml-1">↕</span>;
+    return <span className="text-blue-400 ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>;
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 p-4 sm:p-6">
-      <Toaster position="top-right" />
+    <main className="min-h-screen bg-[#0f1117] p-4 sm:p-6">
+      <Toaster position="top-right" toastOptions={{ style: { background: '#1e2230', color: '#e2e8f0', border: '1px solid #2d3348' } }} />
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Job Tracker</h1>
+          <h1 className="text-2xl font-bold text-slate-100">Job Tracker</h1>
           <div className="flex items-center gap-2">
-            <button onClick={exportCSV} className="px-3 py-1.5 text-xs border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">Export CSV</button>
-            <button onClick={exportJSON} className="px-3 py-1.5 text-xs border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">Export JSON</button>
+            <button onClick={exportCSV} className="px-3 py-1.5 text-xs border border-slate-700 text-slate-400 rounded-lg hover:bg-slate-800 hover:text-slate-200 transition-colors">Export CSV</button>
+            <button onClick={exportJSON} className="px-3 py-1.5 text-xs border border-slate-700 text-slate-400 rounded-lg hover:bg-slate-800 hover:text-slate-200 transition-colors">Export JSON</button>
             <button
               onClick={openAdd}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-500 transition-colors"
             >
-              + Add <span className="hidden sm:inline text-blue-200 text-xs ml-1">⌘K</span>
+              + Add <span className="hidden sm:inline text-blue-300 text-xs ml-1">⌘K</span>
             </button>
           </div>
         </div>
@@ -135,12 +133,12 @@ export default function Dashboard() {
         {/* Stats */}
         {applications.length > 0 && (
           <div className="flex flex-wrap gap-3 mb-5">
-            <Stat label="Total" value={applications.length} color="bg-gray-100 text-gray-700" />
-            <Stat label="Applied" value={stats.Applied} color="bg-blue-50 text-blue-700" />
-            <Stat label="Interview" value={stats.Interview} color="bg-amber-50 text-amber-700" />
-            <Stat label="Offer" value={stats.Offer} color="bg-green-50 text-green-700" />
-            <Stat label="Rejected" value={stats.Rejected} color="bg-red-50 text-red-700" />
-            <Stat label="Withdrawn" value={stats.Withdrawn} color="bg-gray-100 text-gray-500" />
+            <Stat label="Total" value={applications.length} color="bg-slate-800 text-slate-300" />
+            <Stat label="Applied" value={stats.Applied} color="bg-blue-950 text-blue-300" />
+            <Stat label="Interview" value={stats.Interview} color="bg-amber-950 text-amber-300" />
+            <Stat label="Offer" value={stats.Offer} color="bg-green-950 text-green-300" />
+            <Stat label="Rejected" value={stats.Rejected} color="bg-red-950 text-red-300" />
+            <Stat label="Withdrawn" value={stats.Withdrawn} color="bg-slate-800 text-slate-500" />
           </div>
         )}
 
@@ -150,7 +148,7 @@ export default function Dashboard() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search company or role…"
-            className="w-full sm:w-80 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full sm:w-80 bg-slate-900 border border-slate-700 text-slate-200 placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -163,14 +161,14 @@ export default function Dashboard() {
               className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
                 statusFilter.has(s)
                   ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400'
+                  : 'bg-slate-900 text-slate-400 border-slate-700 hover:border-blue-500 hover:text-slate-200'
               }`}
             >
               {s}
             </button>
           ))}
           {statusFilter.size > 0 && (
-            <button onClick={() => setStatusFilter(new Set())} className="px-3 py-1 rounded-full text-xs text-gray-400 hover:text-gray-600 border border-transparent">
+            <button onClick={() => setStatusFilter(new Set())} className="px-3 py-1 rounded-full text-xs text-slate-500 hover:text-slate-300 border border-transparent">
               Clear
             </button>
           )}
@@ -178,53 +176,53 @@ export default function Dashboard() {
 
         {/* Table */}
         {applications.length === 0 ? (
-          <div className="text-center py-24 text-gray-400">
-            <p className="text-lg font-medium">No applications yet</p>
+          <div className="text-center py-24 text-slate-600">
+            <p className="text-lg font-medium text-slate-500">No applications yet</p>
             <p className="text-sm mt-1">Click &quot;+ Add Application&quot; or press ⌘K to get started.</p>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">
-            <p className="text-base font-medium">No results match your filters</p>
-            <button onClick={() => { setSearch(''); setStatusFilter(new Set()); }} className="text-sm text-blue-600 hover:underline mt-1">Clear filters</button>
+          <div className="text-center py-16 text-slate-600">
+            <p className="text-base font-medium text-slate-500">No results match your filters</p>
+            <button onClick={() => { setSearch(''); setStatusFilter(new Set()); }} className="text-sm text-blue-500 hover:underline mt-1">Clear filters</button>
           </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+          <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-slate-800/60 border-b border-slate-700">
                 <tr>
                   <SortTh label="Company" sortKey="company" current={sortKey} dir={sortDir} onSort={handleSort} icon={sortIcon('company')} />
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600">Role</th>
+                  <th className="text-left px-4 py-3 font-semibold text-slate-400">Role</th>
                   <SortTh label="Status" sortKey="status" current={sortKey} dir={sortDir} onSort={handleSort} icon={sortIcon('status')} />
                   <SortTh label="Applied" sortKey="appliedDate" current={sortKey} dir={sortDir} onSort={handleSort} icon={sortIcon('appliedDate')} />
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600">Source</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600">Resume</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600">Actions</th>
+                  <th className="text-left px-4 py-3 font-semibold text-slate-400">Source</th>
+                  <th className="text-left px-4 py-3 font-semibold text-slate-400">Resume</th>
+                  <th className="text-left px-4 py-3 font-semibold text-slate-400">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-slate-800">
                 {filtered.map((app) => (
-                  <tr key={app.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{app.company}</td>
-                    <td className="px-4 py-3 text-gray-700">{app.role}</td>
+                  <tr key={app.id} className="hover:bg-slate-800/50 transition-colors">
+                    <td className="px-4 py-3 font-medium text-slate-100 whitespace-nowrap">{app.company}</td>
+                    <td className="px-4 py-3 text-slate-300">{app.role}</td>
                     <td className="px-4 py-3">
                       <InlineStatusSelect id={app.id} status={app.status} onUpdated={mutate} />
                     </td>
-                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                    <td className="px-4 py-3 text-slate-400 whitespace-nowrap">
                       {new Date(app.appliedDate).toLocaleDateString()}
                     </td>
-                    <td className="px-4 py-3 text-gray-600">{app.source}</td>
+                    <td className="px-4 py-3 text-slate-400">{app.source}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2 flex-wrap">
                         {app.isStarterResume && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">Starter</span>
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-700 text-slate-400">Starter</span>
                         )}
-                        <button onClick={() => setPreviewFile(app.resumeFile)} className="text-xs text-blue-600 hover:underline">View</button>
+                        <button onClick={() => setPreviewFile(app.resumeFile)} className="text-xs text-blue-400 hover:text-blue-300 hover:underline">View</button>
                       </div>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex gap-2">
-                        <button onClick={() => openEdit(app)} className="text-xs text-blue-600 hover:underline">Edit</button>
-                        <button onClick={() => handleDelete(app.id)} className="text-xs text-red-500 hover:underline">Delete</button>
+                        <button onClick={() => openEdit(app)} className="text-xs text-blue-400 hover:text-blue-300 hover:underline">Edit</button>
+                        <button onClick={() => handleDelete(app.id)} className="text-xs text-red-400 hover:text-red-300 hover:underline">Delete</button>
                       </div>
                     </td>
                   </tr>
@@ -259,7 +257,7 @@ function SortTh({ label, sortKey, current, onSort, icon }: {
 }) {
   return (
     <th
-      className={`text-left px-4 py-3 font-semibold text-gray-600 cursor-pointer select-none hover:text-gray-900 ${current === sortKey ? 'text-blue-600' : ''}`}
+      className={`text-left px-4 py-3 font-semibold cursor-pointer select-none transition-colors ${current === sortKey ? 'text-blue-400' : 'text-slate-400 hover:text-slate-200'}`}
       onClick={() => onSort(sortKey)}
     >
       {label}{icon}
@@ -267,5 +265,4 @@ function SortTh({ label, sortKey, current, onSort, icon }: {
   );
 }
 
-// Keep StatusBadge in scope for potential future use
 export { StatusBadge };

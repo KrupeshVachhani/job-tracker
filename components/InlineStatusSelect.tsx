@@ -7,11 +7,11 @@ import type { ApplicationStatus } from '@/types/application';
 const STATUSES: ApplicationStatus[] = ['Applied', 'Interview', 'Offer', 'Rejected', 'Withdrawn'];
 
 const colors: Record<ApplicationStatus, string> = {
-  Applied: 'text-blue-700 bg-blue-50 border-blue-200',
-  Interview: 'text-amber-700 bg-amber-50 border-amber-200',
-  Offer: 'text-green-700 bg-green-50 border-green-200',
-  Rejected: 'text-red-700 bg-red-50 border-red-200',
-  Withdrawn: 'text-gray-600 bg-gray-50 border-gray-200',
+  Applied: 'text-blue-300 bg-blue-950 border-blue-800 [color-scheme:dark]',
+  Interview: 'text-amber-300 bg-amber-950 border-amber-800 [color-scheme:dark]',
+  Offer: 'text-green-300 bg-green-950 border-green-800 [color-scheme:dark]',
+  Rejected: 'text-red-300 bg-red-950 border-red-800 [color-scheme:dark]',
+  Withdrawn: 'text-slate-400 bg-slate-800 border-slate-700 [color-scheme:dark]',
 };
 
 interface Props {
