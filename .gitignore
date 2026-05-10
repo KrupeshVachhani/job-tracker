@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local data (user-specific, not committed)
+/data/*.json
+/data/resumes/*.pdf
+!/data/.gitkeep
+!/data/resumes/.gitkeep
